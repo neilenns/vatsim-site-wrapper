@@ -19,5 +19,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm ci
+      - run: yarn install --immutable --immutable-cache --check-cache
       - run: npm run make -- --platform win32 --arch x64
