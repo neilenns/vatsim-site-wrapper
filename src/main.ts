@@ -47,7 +47,7 @@ const createWindow = (
   const targetWindow = BrowserWindow.fromId(window.id);
   targetWindow.setPosition(x, y);
 
-  // The electron-win-state package doesn't remember full screen state by default
+  // The electron-win-state package doesn't remember full screen state
   // so take care of that by reading a saved value from the store.
   window.setFullScreen(Boolean(store.get("fullScreen")));
 
