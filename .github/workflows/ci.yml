@@ -8,16 +8,17 @@ jobs:
   build:
     runs-on: windows-2022
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 21.x
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: yarn install --immutable --immutable-cache --check-cache
-      - run: npm run make -- --platform win32 --arch x64
+          node-version: 21.x
+          cache: "yarn"
+
+      - name: Install project dependencies
+        run: yarn
+
+      - name: Build and create the installer
+        run: npm run make -- --platform win32 --arch x64
