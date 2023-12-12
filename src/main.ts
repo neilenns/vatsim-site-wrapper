@@ -81,7 +81,12 @@ const createWindow = (
   // Prevent the pages from changing the app window titles.
   window.on("page-title-updated", (event) => {
     event.preventDefault();
-  })
+  });
+
+  // Prevent the page from stopping the app from closing
+  window.webContents.on("will-prevent-unload", (event) => {
+    event.preventDefault();
+  });
 
   // Actually show the window.
   windows.add(window);
