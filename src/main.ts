@@ -78,10 +78,16 @@ const createWindow = (
     window = null;
   });
 
+  // Prevent the pages from changing the app window titles.
+  window.on("page-title-updated", (event) => {
+    event.preventDefault();
+  })
+
   // Actually show the window.
   windows.add(window);
   window.show();
   window.loadURL(site);
+  window.setTitle(title);
 };
 
 const createWindows = () => {
