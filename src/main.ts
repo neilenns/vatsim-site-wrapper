@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, screen, session } from "electron";
 import WinState from "electron-win-state";
 import Store from "electron-store";
 
@@ -16,6 +16,7 @@ const createWindow = (
   xOffset: number,
   yOffset: number
 ) => {
+  console.log(app.getPath("userData"));
   // Each window saves its settings in a separate store so window position is
   // maintained independently.
   const store = new Store({
@@ -109,7 +110,21 @@ const createWindows = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindows);
+app.on("ready", () => {
+  createWindows();
+
+  // Block the trash sound
+  const filter = {
+    urls: ["https://strips.virtualnas.net/sounds/trash.mp3"],
+  };
+
+  session.defaultSession.webRequest.onBeforeRequest(
+    filter,
+    (details, callback) => {
+      callback({ cancel: true });
+    }
+  );
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

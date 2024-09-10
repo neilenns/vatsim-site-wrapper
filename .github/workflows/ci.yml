@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: "Build and pack"
     runs-on: windows-2022
 
     steps:
