@@ -1,7 +1,7 @@
 {
   "name": "vatsim-site-wrapper",
   "productName": "vNAS sites",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Provides a standalone application for the vStrips and VTLDS websites.",
   "main": ".vite/build/main.js",
   "scripts": {
