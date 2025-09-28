@@ -21,10 +21,10 @@ jobs:
         with:
           version: ${{ steps.get_version.outputs.version-without-v }}
 
-      - name: Use Node.js 21.x
+      - name: Use Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 21.x
+          node-version-file: ".nvmrc"
           cache: "yarn"
 
       - name: Install project dependencies

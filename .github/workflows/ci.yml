@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Use Node.js 21.x
+      - name: Use Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 21.x
+          node-version-file: ".nvmrc"
           cache: "yarn"
 
       - name: Install project dependencies
