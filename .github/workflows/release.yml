@@ -22,7 +22,7 @@ jobs:
           version: ${{ steps.get_version.outputs.version-without-v }}
 
       - name: Use Node.js 21.x
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 21.x
           cache: "yarn"
