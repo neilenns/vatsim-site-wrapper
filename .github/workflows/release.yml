@@ -25,10 +25,10 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: ".nvmrc"
-          cache: "yarn"
+          cache: "npm"
 
       - name: Install project dependencies
-        run: yarn
+        run: npm ci
 
       - name: Build and create the installer
         run: npm run make -- --platform win32 --arch x64
