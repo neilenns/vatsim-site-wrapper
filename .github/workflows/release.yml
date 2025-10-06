@@ -17,7 +17,7 @@ jobs:
 
       - name: Set package.json version
         id: package_version
-        uses: KageKirin/set-node-package-version@v0
+        uses: KageKirin/set-node-package-version@v1
         with:
           version: ${{ steps.get_version.outputs.version-without-v }}
 
