@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-2025
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Extract build version
         id: get_version
