@@ -114,15 +114,27 @@ const createWindows = () => {
 app.on("ready", () => {
   createWindows();
 
-  // Block the trash sound
+  // Block the trash sound and any variants like `trash-<id>.mp3`.
+  // Use a domain-wide filter and inspect the URL with a regex so
+  // we match both `/sounds/trash.mp3` and `/assets/trash-CHaoGnjv.mp3`.
   const filter = {
-    urls: ["https://strips.virtualnas.net/sounds/trash.mp3"],
+    urls: ["https://strips.virtualnas.net/*"],
   };
 
   session.defaultSession.webRequest.onBeforeRequest(
     filter,
     (details, callback) => {
-      callback({ cancel: true });
+      try {
+        const url = details.url || "";
+        // Match paths that end with /trash.mp3 or /trash-<anything>.mp3
+        if (/\/trash(?:-[^/]+)?\.mp3$/.test(url)) {
+          callback({ cancel: true });
+          return;
+        }
+      } catch {
+        // In unexpected cases, fall through and don't cancel.
+      }
+      callback({ cancel: false });
     }
   );
 });
