@@ -19,11 +19,6 @@ const createWindow = (
 ) => {
   console.log(app.getPath("userData"));
 
-  // Test for the presence of a stored window x position as a sign that
-  // this is the first launch of the app. Used later to set the default
-  // x,y position of the window on first launch.
-  const isFirstLaunch = false;
-
   let window = new StatefullBrowserWindow({
     width: 800,
     height: 600,
@@ -36,20 +31,6 @@ const createWindow = (
     configFileName: `window-${name}-state.json`,
     supportMaximize: true,
   });
-
-  // On first launch calculate the default position for the window, attempting to center it
-  // on the primary display offset by the specified offset.
-  if (isFirstLaunch) {
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    const x = Math.floor((width - 800) / 2) + xOffset;
-    const y = Math.floor((height - 600) / 2) + yOffset;
-
-    // For some reason just using the win object had cases where the window size wouldn't change for
-    // the non-active window. ChatGPT suggested this fix and it seems to work, although I have no idea
-    // why it would be any different than just using the win object.
-    const targetWindow = BrowserWindow.fromId(window.id);
-    targetWindow.setPosition(x, y);
-  }
 
   // This ensures the app has one icon for each window in the toolbar on Windows
   window.setAppDetails({
