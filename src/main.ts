@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, session } from "electron";
+import { app, BrowserWindow, session } from "electron";
 import { StatefullBrowserWindow } from "stateful-electron-window";
 import squirrelStartup from "electron-squirrel-startup";
 import path from "path";
@@ -10,13 +10,7 @@ if (squirrelStartup) {
 
 const windows = new Set();
 
-const createWindow = (
-  name: string,
-  site: string,
-  title: string,
-  xOffset: number,
-  yOffset: number
-) => {
+const createWindow = (name: string, site: string, title: string) => {
   console.log(app.getPath("userData"));
 
   let window = new StatefullBrowserWindow({
@@ -61,14 +55,8 @@ const createWindow = (
 };
 
 const createWindows = () => {
-  createWindow(
-    "vStrips",
-    "https://strips.virtualnas.net/login",
-    "vStrips",
-    0,
-    0
-  );
-  createWindow("vTDLS", "https://tdls.virtualnas.net/login", "vTDLS", 20, 20);
+  createWindow("vStrips", "https://strips.virtualnas.net/login", "vStrips");
+  createWindow("vTDLS", "https://tdls.virtualnas.net/login", "vTDLS");
 };
 
 // This method will be called when Electron has finished
