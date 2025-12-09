@@ -1,7 +1,7 @@
-import { app, BrowserWindow, screen, session } from "electron";
-import WinState from "electron-win-state";
-import Store from "electron-store";
+import { app, BrowserWindow, session } from "electron";
+import { StatefullBrowserWindow } from "stateful-electron-window";
 import squirrelStartup from "electron-squirrel-startup";
+import path from "path";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (squirrelStartup) {
@@ -10,68 +10,25 @@ if (squirrelStartup) {
 
 const windows = new Set();
 
-const createWindow = (
-  name: string,
-  site: string,
-  title: string,
-  xOffset: number,
-  yOffset: number
-) => {
+const createWindow = (name: string, site: string, title: string) => {
   console.log(app.getPath("userData"));
-  // Each window saves its settings in a separate store so window position is
-  // maintained independently.
-  const store = new Store({
-    name: `window-${name}-config`,
-  });
 
-  // Test for the presence of a stored window x position as a sign that
-  // this is the first launch of the app. Used later to set the default
-  // x,y position of the window on first launch.
-  const isFirstLaunch = !store.has("x");
-
-  let window = WinState.createBrowserWindow({
+  let window = new StatefullBrowserWindow({
     width: 800,
     height: 600,
     autoHideMenuBar: true,
     title: title,
     icon: __dirname + `/images/${name}_icon.ico`,
-    winState: {
-      store: store,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
     },
-    // The window is hidden by default so it can be set full screen if necessary before displaying.
-    show: false,
+    configFileName: `window-${name}-state.json`,
+    supportMaximize: true,
   });
-
-  // On first launch calculate the default position for the window, attempting to center it
-  // on the primary display offset by the specified offset.
-  if (isFirstLaunch) {
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    const x = Math.floor((width - 800) / 2) + xOffset;
-    const y = Math.floor((height - 600) / 2) + yOffset;
-
-    // For some reason just using the win object had cases where the window size wouldn't change for
-    // the non-active window. ChatGPT suggested this fix and it seems to work, although I have no idea
-    // why it would be any different than just using the win object.
-    const targetWindow = BrowserWindow.fromId(window.id);
-    targetWindow.setPosition(x, y);
-  }
-
-  // The electron-win-state package doesn't remember full screen state
-  // so take care of that by reading a saved value from the store.
-  window.setFullScreen(Boolean(store.get("fullScreen")));
 
   // This ensures the app has one icon for each window in the toolbar on Windows
   window.setAppDetails({
     appId: name,
-  });
-
-  // When the app goes into and out of full screen remember the state
-  // so it can be restored on future runs.
-  window.on("enter-full-screen", () => {
-    store.set("fullScreen", true);
-  });
-  window.on("leave-full-screen", () => {
-    store.set("fullScreen", false);
   });
 
   // Handle closing windows
@@ -98,14 +55,8 @@ const createWindow = (
 };
 
 const createWindows = () => {
-  createWindow(
-    "vStrips",
-    "https://strips.virtualnas.net/login",
-    "vStrips",
-    0,
-    0
-  );
-  createWindow("vTDLS", "https://tdls.virtualnas.net/login", "vTDLS", 20, 20);
+  createWindow("vStrips", "https://strips.virtualnas.net/login", "vStrips");
+  createWindow("vTDLS", "https://tdls.virtualnas.net/login", "vTDLS");
 };
 
 // This method will be called when Electron has finished
