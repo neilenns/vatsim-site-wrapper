@@ -1,7 +1,7 @@
 import { app, BrowserWindow, screen, session } from "electron";
-import WinState from "electron-win-state";
-import Store from "electron-store";
+import { StatefullBrowserWindow } from "stateful-electron-window";
 import squirrelStartup from "electron-squirrel-startup";
+import path from "path";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (squirrelStartup) {
@@ -18,28 +18,23 @@ const createWindow = (
   yOffset: number
 ) => {
   console.log(app.getPath("userData"));
-  // Each window saves its settings in a separate store so window position is
-  // maintained independently.
-  const store = new Store({
-    name: `window-${name}-config`,
-  });
 
   // Test for the presence of a stored window x position as a sign that
   // this is the first launch of the app. Used later to set the default
   // x,y position of the window on first launch.
-  const isFirstLaunch = !store.has("x");
+  const isFirstLaunch = false;
 
-  let window = WinState.createBrowserWindow({
+  let window = new StatefullBrowserWindow({
     width: 800,
     height: 600,
     autoHideMenuBar: true,
     title: title,
     icon: __dirname + `/images/${name}_icon.ico`,
-    winState: {
-      store: store,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
     },
-    // The window is hidden by default so it can be set full screen if necessary before displaying.
-    show: false,
+    configFileName: `window-${name}-state.json`,
+    supportMaximize: true,
   });
 
   // On first launch calculate the default position for the window, attempting to center it
@@ -56,22 +51,9 @@ const createWindow = (
     targetWindow.setPosition(x, y);
   }
 
-  // The electron-win-state package doesn't remember full screen state
-  // so take care of that by reading a saved value from the store.
-  window.setFullScreen(Boolean(store.get("fullScreen")));
-
   // This ensures the app has one icon for each window in the toolbar on Windows
   window.setAppDetails({
     appId: name,
-  });
-
-  // When the app goes into and out of full screen remember the state
-  // so it can be restored on future runs.
-  window.on("enter-full-screen", () => {
-    store.set("fullScreen", true);
-  });
-  window.on("leave-full-screen", () => {
-    store.set("fullScreen", false);
   });
 
   // Handle closing windows
